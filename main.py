@@ -35,23 +35,27 @@ while (i < ( len(train[0] ) )):
         da.delCollumn(train,i)
         i = i - 4
     i = i + 1
-
 #remove the header
-train = [[ float(i) for i in y] for y in train[1:] ]
-signal =  [[ float(i) for i in y] for y in signal[1:] ]
 
 #now train
-import sklearn.ensemble import RandomForestRegressor
-clf = RandomForestRegressor(random_state = 0, n_estimators=60,max_depth=38)
+from sklearn.ensemble import RandomForestRegressor
+clf = RandomForestRegressor(random_state = 1, n_estimators=100)
 clf.fit(train[1:],signal[1:])
 
 #now predict
 test = csv.reader( open(r'test.csv'))
 c = csv.writer(open("submit1.csv","wb"))
-c.writerow(['id','units'])
-test = [[float(i) for i in y] for y in test[1:]]
+c.writerow(['id','prediction'])
+test = [[i for i in y] for y in test]
+for i in range(len(test[0])):
+
+    if ( test[0][i] == 'SPDhits'):
+        da.delCollumn(test,i)
+print len(test[1])
+print len(train[1])
 for i in test[1:]:
-    c.writerow( [i[0] , str( clf.predict(i) )] )
+
+    c.writerow( [i[0] , str( clf.predict_proba(i) ) ] )
 
 
 
